@@ -1,6 +1,7 @@
 from flask import render_template, request, redirect, url_for, flash
 from model.ejercicio_expresiones import infija_a_posfija
 from model.ejercicio_expresiones import ArbolBinario_Expresiones
+from model.ejercicio_expresiones import validar_expresion
 
 
 def index():
@@ -16,20 +17,22 @@ def convertir():
         flash("Ingrese una expresión válida.")
         return redirect(url_for("index"))
 
-    # 1. Convertir de Infija a Posfija.
-    posfija = infija_a_posfija(expresion)
+    es_valida, mensaje = validar_expresion(expresion)
+    if not es_valida:
+        flash(mensaje)
+        return redirect(url_for("index"))
 
-    # 2. Crear el Árbol Binario y armar su estructura.
-    arbol = ArbolBinario_Expresiones()
-    arbol.construir_desde_posfija(posfija)
-
-    # 3. Obtener los recorridos del árbol.
-    preorden = arbol.PreOrden()
-    inorden = arbol.InOrden()
-    postorden = arbol.PostOrden()
-
-    # 4. Generar la representación gráfica del árbol en formato SVG.
-    grafico_svg = arbol.grafo().pipe(format="svg").decode("utf-8")
+    try:
+        posfija = infija_a_posfija(expresion)
+        arbol = ArbolBinario_Expresiones()
+        arbol.construir_desde_posfija(posfija)
+        preorden = arbol.PreOrden()
+        inorden = arbol.InOrden()
+        postorden = arbol.PostOrden()
+        grafico_svg = arbol.grafo().pipe(format="svg").decode("utf-8")
+    except (ValueError, IndexError) as e:
+        flash(f"Error al procesar la expresión: {e}")
+        return redirect(url_for("index"))
 
     flash("Expresión convertida")
 

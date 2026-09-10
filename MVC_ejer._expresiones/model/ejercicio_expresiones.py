@@ -53,9 +53,16 @@ class ArbolBinario_Expresiones(ArbolBinario):
             if caracter not in "+-*/":
                 pila_nodos.append(nodo)
             else:
+                if len(pila_nodos) < 2:
+                    raise ValueError(
+                        f"Expresión inválida: operador '{caracter}' sin suficientes operandos."
+                    )
                 nodo._derecho = pila_nodos.pop()
                 nodo._izquierdo = pila_nodos.pop()
                 pila_nodos.append(nodo)
+
+        if len(pila_nodos) != 1:
+            raise ValueError("Expresión inválida: sobran operandos sin operador.")
 
         self.raiz = pila_nodos.pop()
 
@@ -156,4 +163,35 @@ def infija_a_posfija(expresion):
         salida.append(pila_operadores.pop())
 
     return salida
+
+
+def validar_expresion(expresion):
+    """Valida que una expresión infija esté bien formada antes de convertirla.
+
+    Args:
+        expresion (str): Expresión matemática en notación infija.
+
+    Returns:
+        tuple: (es_valida: bool, mensaje: str)
+    """
+    texto = expresion.strip()
+
+    permitidos = set("0123456789+-*/(). ")
+    for i, c in enumerate(texto):
+        if c not in permitidos:
+            return False, f"Carácter no permitido: '{c}' (posición {i + 1})"
+
+    limpio = texto.replace(" ", "")
+
+    if limpio[0] in "+-*/":
+        return False, f"La expresión no puede empezar con operador: '{limpio[0]}'"
+    if limpio[-1] in "+-*/":
+        return False, f"La expresión no puede terminar con operador: '{limpio[-1]}'"
+
+    operadores = "+-*/"
+    for i in range(len(limpio) - 1):
+        if limpio[i] in operadores and limpio[i + 1] in operadores:
+            return False, f"Operadores consecutivos: '{limpio[i]}{limpio[i + 1]}' en posición {i + 1}"
+
+    return True, ""
 
