@@ -7,10 +7,10 @@ Fecha:    19/08/2026
 import os
 import sys
 
-# Permite ejecutar el archivo directamente: python Ejercicios/tres_en_raya/ejercicio_3en_raya.py
+# Permite ejecutar el archivo directamente: python Ejercicios/ejercicio2_tres_en_raya/ejercicio_3en_raya.py
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from adt_arbol import ArbolBinario, Nodo  # noqa: E402
+from ejercicio1_adt_arbol import ArbolBinario, Nodo  # noqa: E402
 
 
 class Tablero3EnRaya:

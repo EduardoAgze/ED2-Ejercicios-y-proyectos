@@ -13,10 +13,10 @@ import os
 import sys
 
 # Permite ejecutar el archivo directamente:
-# python Ejercicios/reordenamiento_arbol/reordenamiento.py
+# python Ejercicios/ejercicio3_reordenamiento_arbol/reordenamiento.py
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from adt_arbol import ArbolBinario, Nodo  # noqa: E402
+from ejercicio1_adt_arbol import ArbolBinario, Nodo  # noqa: E402
 
 
 def valores_inorden(arbol):

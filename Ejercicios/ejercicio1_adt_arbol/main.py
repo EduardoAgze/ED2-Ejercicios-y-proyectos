@@ -11,10 +11,10 @@ preorden, inorden y postorden.
 import os
 import sys
 
-# Permite ejecutar el archivo directamente: python Ejercicios/adt_arbol/main.py
+# Permite ejecutar el archivo directamente: python Ejercicios/ejercicio1_adt_arbol/main.py
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from adt_arbol import ArbolBinario  # noqa: E402
+from ejercicio1_adt_arbol import ArbolBinario  # noqa: E402
 
 
 def mostrar_estado(arbol, titulo):
