@@ -1,10 +1,11 @@
 """
 Autor:    Vargas Pantoja Luis Eduardo
-Título:   Clase ArbolBinario para representar un árbol binario de búsqueda (ABB) incluyendo sus recorridos y métodos de inserción y búsqueda.
-Version:  1.0.0
+Título:   Clase ArbolBinario para representar un árbol binario de búsqueda (ABB)
+          incluyendo inserción, búsqueda, eliminación y recorridos.
+Version:  1.1.0
 Fecha:    31/08/2026
 """
-from nodo import Nodo
+from .nodo import Nodo
 
 
 class ArbolBinario:
@@ -89,34 +90,116 @@ class ArbolBinario:
         else:
             return self._buscar_recursivo(valor, nodo.derecho)
 
+    def eliminar(self, valor):
+        """Elimina un valor del árbol binario de búsqueda.
+
+        Cubre los tres casos clásicos: nodo hoja, nodo con un solo hijo y
+        nodo con dos hijos (se reemplaza por el menor de su subárbol derecho).
+
+        Args:
+            valor: Valor que se eliminará del árbol.
+
+        Returns:
+            bool: True si el valor existía y fue eliminado, False si no se encontró.
+        """
+        self.raiz, eliminado = self._eliminar_recursivo(self.raiz, valor)
+        return eliminado
+
+    def _eliminar_recursivo(self, nodo, valor):
+        """Elimina un valor de forma recursiva manteniendo el orden del ABB.
+
+        Args:
+            nodo: Nodo actual durante la búsqueda del valor.
+            valor: Valor que se eliminará.
+
+        Returns:
+            tuple: (nueva_raíz_del_subárbol, se_eliminó)
+        """
+        if nodo is None:
+            return None, False
+
+        if valor < nodo.valor:
+            nodo.izquierdo, eliminado = self._eliminar_recursivo(nodo.izquierdo, valor)
+            return nodo, eliminado
+
+        if valor > nodo.valor:
+            nodo.derecho, eliminado = self._eliminar_recursivo(nodo.derecho, valor)
+            return nodo, eliminado
+
+        # Caso 1 y 2: nodo hoja o con un solo hijo.
+        if nodo.izquierdo is None:
+            return nodo.derecho, True
+        if nodo.derecho is None:
+            return nodo.izquierdo, True
+
+        # Caso 3: dos hijos -> sustituir por el menor del subárbol derecho.
+        sucesor = self._minimo(nodo.derecho)
+        nodo.valor = sucesor.valor
+        nodo.derecho, _ = self._eliminar_recursivo(nodo.derecho, sucesor.valor)
+        return nodo, True
+
+    def _minimo(self, nodo):
+        """Devuelve el nodo con el menor valor del subárbol indicado."""
+        actual = nodo
+        while actual.izquierdo is not None:
+            actual = actual.izquierdo
+        return actual
+
+    def altura(self):
+        """Calcula la altura del árbol (número de niveles).
+
+        Returns:
+            int: 0 si el árbol está vacío, 1 si solo tiene la raíz, etc.
+        """
+        return self._altura_recursivo(self.raiz)
+
+    def _altura_recursivo(self, nodo):
+        """Calcula la altura de un subárbol de forma recursiva."""
+        if nodo is None:
+            return 0
+        return 1 + max(
+            self._altura_recursivo(nodo.izquierdo),
+            self._altura_recursivo(nodo.derecho),
+        )
+
     def construir_desde_posfija(self, posfija):
         """Construye un árbol binario a partir de una expresión en notación posfija.
 
         Args:
-            posfija (str): Expresión en notación posfija sin espacios.
-                          Los operandos pueden ser números o variables (caracteres),
-                          y los operadores son: +, -, *, /.
+            posfija (list | str): Expresión en notación posfija. Si es una cadena
+                se asume que no tiene espacios y cada carácter es un token.
+                Los operandos pueden ser números o variables y los operadores
+                son: +, -, *, /.
 
+        Raises:
+            ValueError: Si la expresión está vacía o mal formada.
         """
         if not posfija:
             self.raiz = None
             return
-        
+
         pila_nodos = []
 
-        for caracter in posfija:
-            nodo = Nodo(caracter)
+        for token in posfija:
+            nodo = Nodo(token)
 
-            # Si es un número (operando)
-            if caracter not in "+-*/":
+            # Si es un operando, se apila.
+            if token not in "+-*/":
                 pila_nodos.append(nodo)
             else:
-                # Si es un operador, asigna los dos últimos nodos como sus hijos
-                nodo._derecho = pila_nodos.pop()
-                nodo._izquierdo = pila_nodos.pop()
+                # Si es un operador, toma los dos últimos nodos como sus hijos.
+                if len(pila_nodos) < 2:
+                    raise ValueError(
+                        f"Expresión inválida: operador '{token}' sin suficientes operandos."
+                    )
+                nodo.derecho = pila_nodos.pop()
+                nodo.izquierdo = pila_nodos.pop()
                 pila_nodos.append(nodo)
 
-        # El último nodo en la pila es la raíz principal
+        if len(pila_nodos) != 1:
+            raise ValueError("Expresión inválida: sobran operandos sin operador.")
+
+        # El último nodo en la pila es la raíz principal.
         self.raiz = pila_nodos.pop()
 
 

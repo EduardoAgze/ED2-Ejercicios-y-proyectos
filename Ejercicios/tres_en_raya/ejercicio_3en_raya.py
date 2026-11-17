@@ -1,12 +1,16 @@
 """
 Autor:    Vargas Pantoja Luis Eduardo
 Título:   Estructura de un Arbol Binario enfocado en el juego de tres en raya.
-Version:  1.0.0
+Version:  1.1.0
 Fecha:    19/08/2026
 """
+import os
+import sys
 
-from arbolbinario import ArbolBinario
-from nodo import Nodo
+# Permite ejecutar el archivo directamente: python Ejercicios/tres_en_raya/ejercicio_3en_raya.py
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from adt_arbol import ArbolBinario, Nodo  # noqa: E402
 
 
 class Tablero3EnRaya:

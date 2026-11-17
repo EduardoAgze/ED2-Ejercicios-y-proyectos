@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tres en Raya</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+    <h1>Tres en Raya</h1>
+
+    <form class="mode-form" action="/mode" method="post">
+        <label>Modo:</label>
+        <select name="modo">
+            <option value="hvh" {% if modo == 'hvh' %}selected{% endif %}>
+                Humano vs Humano
+            </option>
+            <option value="hvai" {% if modo == 'hvai' %}selected{% endif %}>
+                Humano vs IA
+            </option>
+            <option value="hvml" {% if modo == 'hvml' %}selected{% endif %}>
+                Humano vs IA ML
+            </option>
+        </select>
+        <button type="submit">Cambiar</button>
+    </form>
+
+    {% if modo == 'hvai' %}
+    <form class="mode-form" action="/dificultad" method="post">
+        <label>Dificultad:</label>
+        <select name="dificultad">
+            <option value="facil" {% if dificultad == 'facil' %}selected{% endif %}>
+                Fácil
+            </option>
+            <option value="medio" {% if dificultad == 'medio' %}selected{% endif %}>
+                Medio
+            </option>
+            <option value="dificil" {% if dificultad == 'dificil' %}selected{% endif %}>
+                Difícil
+            </option>
+        </select>
+        <button type="submit">Cambiar</button>
+    </form>
+    {% endif %}
+
+    {% if terminado %}
+        {% if ganador %}
+            <p class="status">Ganador: {{ ganador }}</p>
+        {% else %}
+            <p class="status">Empate.</p>
+        {% endif %}
+    {% else %}
+        <p class="status">Turno: {{ turno }}</p>
+    {% endif %}
+
+    {% if mensaje %}
+        <p class="message">{{ mensaje }}</p>
+    {% else %}
+        <p class="message"></p>
+    {% endif %}
+
+    {% if modo in ('hvai', 'hvml') %}
+    <div class="metrics">
+        {% if modo == 'hvai' %}
+        <span>Dificultad:
+            {% if dificultad == 'facil' %}Fácil
+            {% elif dificultad == 'medio' %}Medio
+            {% else %}Difícil{% endif %}
+        </span>
+        {% endif %}
+        {% if modo == 'hvml' and nodos == 0 %}
+        <span>ML directo</span>
+        {% elif modo == 'hvml' and nodos == -1 %}
+        <span>ML fallback Minimax</span>
+        {% else %}
+        <span>Nodos: {{ nodos }}</span>
+        {% endif %}
+        <span>Tiempo IA: {{ "%.1f"|format(tiempo_ms) }} ms</span>
+    </div>
+    {% endif %}
+    <table class="board">
+        {% for r in range(3) %}
+        <tr>
+            {% for c in range(3) %}
+            <td class="cell {% if board[r][c] == 'X' %}cell-x{% elif board[r][c] == 'O' %}cell-o{% endif %}">
+                {% if board[r][c] == ' ' and not terminado %}
+                <form action="/move" method="post">
+                    <input type="hidden" name="row" value="{{ r }}">
+                    <input type="hidden" name="col" value="{{ c }}">
+                    <button class="cell-button" type="submit">&nbsp;</button>
+                </form>
+                {% else %}
+                    {{ board[r][c] }}
+                {% endif %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+
+    <form class="reset-form" action="/reset" method="post">
+        <button type="submit">Reiniciar</button>
+    </form>
+    </div>
+</body>
+</html>
