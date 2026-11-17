@@ -1,7 +1,7 @@
 # ADT Árbol Binario — Ejercicios y Proyectos
 
 Repositorio de la materia **Estructura de Datos II**. Reúne los ejercicios de
-clase y los proyectos desarrollados sobre árboles binarios.
+clase y los proyectos desarrollados sobre árboles binarios y algoritmos de Machine Learning.
 
 **Alumno:** Luis Eduardo Vargas Pantoja
 **# de Registro:** 225044765
